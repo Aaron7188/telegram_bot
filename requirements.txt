@@ -4,5 +4,5 @@ Flask-Migrate
 Flask-Redis
 mysqlclient
 load_dotenv
-
+apscheduler
 python-dotenv~=1.0.1

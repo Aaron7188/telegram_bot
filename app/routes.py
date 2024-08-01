@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app import db, redis
-from app.models import Question, Answer, Message
+from app.models import Question, Answer, Message, User, UserActivity
 
 bp = Blueprint('main', __name__)
 
@@ -23,8 +23,31 @@ def webhook():
         # Check for keyword and reply
         response = check_keyword(content)
         return jsonify({'text': response})
+
+    # 处理新成员加入
+    new_chat_member = data.get('new_chat_member')
+    if new_chat_member:
+        return jsonify({'text': 'Welcome to the group!'})
+
     return jsonify({'status': 'ok'})
 
+#签到功能
+@bp.route('/checkin', methods=['POST'])
+def checkin():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    user = User.query.get(user_id)
+
+    if user:
+        user.points += 10
+        activity = UserActivity(user_id=user.id, activity_type='checkin')
+        db.session.add(activity)
+        db.session.commit()
+        return jsonify({'status': 'success', 'points': user.points})
+    return jsonify({'status': 'error', 'message': 'User not found'})
+
+
+#检查关键词
 def check_keyword(content):
     # Implement keyword check logic
     question = Question.query.filter_by(content=content).first()
