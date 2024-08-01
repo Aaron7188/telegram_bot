@@ -1,0 +1,8 @@
+Flask~=3.0.3
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Redis
+mysqlclient
+load_dotenv
+
+python-dotenv~=1.0.1
