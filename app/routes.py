@@ -46,6 +46,24 @@ def checkin():
         return jsonify({'status': 'success', 'points': user.points})
     return jsonify({'status': 'error', 'message': 'User not found'})
 
+#添加获取用户和用户活动的API端点
+@bp.route('/admin/users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    return jsonify([user.to_dict() for user in users])
+
+@bp.route('/admin/user/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        return jsonify(user.to_dict())
+    return jsonify({'status': 'error', 'message': 'User not found'})
+
+@bp.route('/admin/user/<int:user_id>/activities', methods=['GET'])
+def get_user_activities(user_id):
+    activities = UserActivity.query.filter_by(user_id=user_id).all()
+    return jsonify([activity.to_dict() for activity in activities])
+
 
 #检查关键词
 def check_keyword(content):
